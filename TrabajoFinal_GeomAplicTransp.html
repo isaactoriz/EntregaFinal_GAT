@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entrega Final GAT 2026-1</title>
+    <style>
+        /* * Estilos principales 
+         * Se han movido todos los estilos a la sección <head> para mejor organización 
+         */
+        body {
+            /* Fondo ligero para contrastar con el contenedor principal */
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f3f4f6; 
+        }
+        
+        /* * Contenedor principal (main-container) 
+         * Esto implementa el concepto de 'max-width' para centrar la página 
+         * y le da el look de tarjeta con esquinas redondeadas al contenido completo.
+         */
+        .main-container {
+            max-width: 90%; /* Limita el ancho en monitores grandes */
+            width: 95%; /* Asegura que sea responsivo en móviles */
+            margin: 40px auto; /* Centra el contenedor horizontalmente y añade margen superior/inferior */
+            padding: 20px;
+            background-color: white; /* Fondo para el contenido */
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+
+        /* Estilos para el encabezado principal (el banner rojo) */
+        .header-banner {
+            background-color: #E95A44;
+            width: 100%;
+            margin: 0 0 20px 0;
+            text-align: center;
+            border-radius: 1rem;
+            padding: 1px 0;
+            color: white;
+        }
+        
+        .header-banner h1 {
+            line-height: 1.2;
+            padding: 1px 0;
+        }
+
+        /* * LOGO/IMAGEN 
+         */
+        .info-box img {
+            width: 75px;
+            height: 75px;
+            /* Estilo para que la imagen se mantenga a la derecha */
+            margin-left: auto;
+            display: block; 
+        }
+        
+        /* Estilos de la barra de navegación (topnav) */
+        .topnav {
+            overflow-x: auto; /* Permite desplazamiento en dispositivos muy pequeños */
+            white-space: nowrap; /* Evita que los enlaces se rompan en varias líneas */
+            background-color: #333;
+            border-radius: 0.5rem; 
+            margin-bottom: 20px;
+        }
+
+        .topnav a {
+            display: inline-block; /* Usa inline-block en lugar de float para manejo de overflow */
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 15px; /* Tamaño un poco más pequeño para caber más */
+            cursor: pointer; /* Indica que es interactivo */
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #E95A44;
+            color: white;
+        }
+        
+        /* * Estilos para la información del curso/alumno (info-box) 
+         * Uso de Flexbox para alinear el texto (izquierda) y la imagen (derecha)
+         */
+        .info-box {
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            /* Configuración de Flexbox para la alineación horizontal */
+            display: flex;
+            justify-content: space-between; /* Espacio entre el texto y la imagen */
+            align-items: center; /* Centra verticalmente ambos elementos */
+        }
+        
+        .info-text p {
+            margin: 5px 0; /* Ajuste de margen para el texto */
+        }
+
+        /* Estilos para ocultar/mostrar las secciones de contenido */
+        .content-section {
+            display: none;
+            padding: 20px 0;
+            margin-top: 10px;
+            /* Eliminé el borde para que el contenido fluya mejor en la tarjeta principal */
+        }
+
+        .content-section.active {
+            display: block;
+        }
+        
+        .content-section ol {
+            padding-left: 20px; /* Ajusta la indentación para listas ordenadas */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Main container for max-width, centering, and card effect -->
+<div class="main-container">
+
+    <!-- Header Banner -->
+    <div class="header-banner">
+        <h1>
+            <p style="font-size:90%; margin: 5px 0;">Entrega Final:</p> 
+            <p style="font-size:120%; margin: 5px 0;">Geomática Aplicada al Transporte</p>
+        </h1>
+    </div>
+    
+    <!-- Course Info and Logo (side-by-side using Flexbox) -->
+    <div class="info-box">
+        <!-- Contenedor para el texto del curso/alumno -->
+        <div class="info-text">
+            <b>
+                <p>Semestre: 2026-1</p>
+                <p>Alumno: Isaac Ernesto Lazcano Toríz</p>
+                <p>Profesor: Ing. Luis Arturo Cabrera López</p>
+            </b>
+        </div>
+
+        <!-- Imagen del Escudo (ahora a la derecha del texto) -->
+        <img src="https://www.ingenieria.unam.mx/nuestra_facultad/images/institucionales/escudo_fi_color.png" alt="Escudo de la Facultad de Ingeniería de la UNAM">
+    </div>
+
+    <!-- Navigation Bar (Ahora con los temas principales como pestañas) -->
+    <div class="topnav">
+        <a class="nav-link active" onclick="handleNavigation('home')" id="link-home">Inicio</a>
+        <a class="nav-link" onclick="handleNavigation('infraestructura')" id="link-infraestructura">Infraestructura</a>
+        <a class="nav-link" onclick="handleNavigation('estadistica')" id="link-estadistica">Estadística</a>
+        <a class="nav-link" onclick="handleNavigation('rugosidad')" id="link-rugosidad">Rugosidad</a>
+        <a class="nav-link" onclick="handleNavigation('carretera_od')" id="link-carretera_od">Carretera O-D</a>
+        <a class="nav-link" onclick="handleNavigation('ruta_optima')" id="link-ruta_optima">Ruta Óptima</a>
+    </div>
+    
+    <!-- ************************************ -->
+    <!-- Áreas de Contenido (Secciones dinámicas) -->
+    <!-- ************************************ -->
+
+    <!-- 1. Sección de Inicio (Por defecto activa) -->
+    <div id="home-content" class="content-section active">
+        <p>Ésta es una página donde se encontrarán todos los entregables que se realizaron dentro del curso, incluyendo mapas estáticos y dinámicos, documentos pdf, archivos excel, etc.</p>
+        <p>El contenido estará dividido en los siguientes temas:</p>
+        <ul>
+            <li>Infraestructura Carretera y Desarrollo Económico <b>(Infraestructura)</b></li>
+            <ol>
+                <li>Documento en conjunto</li>
+                <li>Descripción de Participación</li>
+                <li>Resultados</li>
+            </ol>
+            <p></p>
+            <li>Estadística Carretera <b>(Estadística)</b></li>
+            <ol start="4">
+                <li>Shapefile Infraestructura Carretera</li>
+                <li>Mapa Dinámico Infraestructura Carretera</li>
+            </ol>
+            <p></p>
+            <li>Capa Asignada para el Análisis de Rugosidad <b>(Rugosidad)</b></li>
+            <ol start="6">
+                <li>Documento de Exposición de Procedimiento</li>
+                <li>Mapa de Factibilidad Resultante</li>
+            </ol>
+            <p></p>
+            <li>Carretera Origen-Destino <b>(Carretera O-D)</b></li>
+            <ol start="8">
+                <li>Proyecto Automatizado para Trazo de Obra Lineal</li>
+                <li>Proceso, Datos e Insumos por Herramienta</li>
+                <li>Proceso Evaluación Multicriterio</li>
+                <li>Mapa Resultado de Carretera Origen-Destino</li>
+            </ol>
+            <p></p>
+            <li>Ruta Óptima Origen-Destino <b>(Ruta Óptima)</b></li>
+            <ol start="12">
+                <li>Mapa dinámico de Ruta Óptima</li>
+            </ol>
+        </ul>
+    </div>
+    
+    <!-- 2. Sección: Infraestructura Carretera y Desarrollo Económico -->
+    <div id="infraestructura-content" class="content-section">
+        <h2>1. Infraestructura Carretera y Desarrollo Económico</h2>
+        <ol>
+            <li>Documento en conjunto</li>
+            <li>Descripción de Participación</li>
+            <li>Resultados</li>
+        </ol>
+        <p>Aquí se añadirán enlaces directos a cada entregable.</p>
+    </div>
+
+    <!-- 3. Sección: Estadística Carretera -->
+    <div id="estadistica-content" class="content-section">
+        <h2>2. Estadística Carretera</h2>
+        <ol start="4">
+            <li>Shapefile Infraestructura Carretera</li>
+            <li>Mapa Dinámico Infraestructura Carretera</li>
+        </ol>
+        <p>Estos entregables se centran en la recopilación y visualización de datos de infraestructura.</p>
+    </div>
+    
+    <!-- 4. Sección: Capa Asignada para el Análisis de Rugosidad -->
+    <div id="rugosidad-content" class="content-section">
+        <h2>3. Capa Asignada para el Análisis de Rugosidad</h2>
+        <ol start="6">
+            <li>Documento de Exposición de Procedimiento</li>
+            <li>Mapa de Factibilidad Resultante</li>
+        </ol>
+        <p>Se detalla el procedimiento de análisis de la capa de rugosidad y el mapa final.</p>
+    </div>
+
+    <!-- 5. Sección: Carretera Origen-Destino -->
+    <div id="carretera_od-content" class="content-section">
+        <h2>4. Carretera Origen-Destino</h2>
+        <ol start="8">
+            <li>Proyecto Automatizado para Trazo de Obra Lineal</li>
+            <li>Proceso, Datos e Insumos por Herramienta</li>
+            <li>Proceso Evaluación Multicriterio</li>
+            <li>Mapa Resultado de Carretera Origen-Destino</li>
+        </ol>
+        <p>Esta sección incluye la documentación y resultados del trazo automatizado.</p>
+    </div>
+
+    <!-- 6. Sección: Ruta Óptima Origen-Destino -->
+    <div id="ruta_optima-content" class="content-section">
+        <h2>5. Ruta Óptima Origen-Destino</h2>
+        <ol start="12">
+            <li>Mapa dinámico de Ruta Óptima</li>
+        </ol>
+        <p>El mapa dinámico final que muestra la ruta óptima calculada.</p>
+    </div>
+  
+</div> <!-- End main-container -->
+
+<script>
+    /**
+     * Función que gestiona la navegación entre secciones (simulación de una SPA).
+     * Muestra la sección de contenido solicitada y actualiza el botón activo en la barra de navegación.
+     * @param {string} sectionId - El ID de la sección de contenido a mostrar (e.g., 'home', 'infraestructura').
+     */
+    function handleNavigation(sectionId) {
+        // 1. Ocultar todas las secciones de contenido
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // 2. Mostrar la sección solicitada
+        const targetSection = document.getElementById(sectionId + '-content');
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+
+        // 3. Actualizar el estado 'active' en la barra de navegación
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        const activeLink = document.getElementById('link-' + sectionId);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        // Si quisieras ejecutar código específico al cambiar de sección, sería aquí.
+        // Por ejemplo, para cargar un mapa dinámico solo cuando se pulsa su pestaña.
+        if (sectionId === 'ruta_optima') {
+             console.log('Cargando mapa dinámico de Ruta Óptima...');
+             // Aquí iría el código para inicializar un mapa de Leaflet o Three.js
+        }
+    }
+
+    // Inicializa la navegación al cargar la página para asegurar que 'Inicio' esté activo
+    document.addEventListener('DOMContentLoaded', () => {
+        handleNavigation('home');
+    });
+</script>
+
+</body>
+</html>
