@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Ruta Origen Destino</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <!-- Leaflet Control Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* --- Personalización Profunda de Leaflet Routing Machine --- */
+        
+        /* 1. El Contenedor Principal */
+        .leaflet-routing-container {
+            width: 100% !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Ocupar todo el alto del sidebar */
+        }
+
+        /* 2. Sección de Inputs (Geocoders) - Compactos */
+        .leaflet-routing-geocoders {
+            background-color: #f8fafc; /* bg-slate-50 */
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        /* OCULTAR: Botón para añadir puntos intermedios manualmente */
+        .leaflet-routing-add-waypoint {
+            display: none !important;
+        }
+
+        .leaflet-routing-geocoders input {
+            width: 100%;
+            padding: 8px 10px; /* Tamaño reducido (más pequeño) */
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px; /* Fuente reducida (más pequeña) */
+            color: #334155;
+            transition: all 0.2s;
+            background-color: white;
+        }
+
+        .leaflet-routing-geocoders input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Botón de reverso (flechas) */
+        .leaflet-routing-reverse-waypoints {
+            float: right;
+            margin-top: -33px; 
+            margin-right: -5px;
+            opacity: 0.5;
+            cursor: pointer;
+        }
+        .leaflet-routing-reverse-waypoints:hover {
+            opacity: 1;
+        }
+
+        /* 3. Sección de Instrucciones (Itinerario) */
+        .leaflet-routing-alt {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0;
+            background-color: white;
+            scrollbar-width: thin;
+        }
+
+        .leaflet-routing-alt table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .leaflet-routing-alt tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.1s;
+        }
+
+        .leaflet-routing-alt tr:hover {
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+
+        .leaflet-routing-alt td {
+            padding: 10px 12px;
+            vertical-align: middle;
+        }
+
+        /* Iconos de dirección en la tabla */
+        .leaflet-routing-icon {
+            background-image: url('https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet.routing.icons.png');
+            width: 20px;
+            height: 20px;
+            background-size: 240px 20px;
+        }
+
+        /* Header de la ruta (Ej: "52 min, 35 km") */
+        .leaflet-routing-alt h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            padding: 16px 16px 5px 16px;
+            margin: 0;
+        }
+        
+        .leaflet-routing-alt h3 {
+            font-size: 12px;
+            font-weight: normal;
+            color: #64748b;
+            padding: 0 16px 16px 16px;
+            margin: 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* Error Handler */
+        .leaflet-routing-error {
+            padding: 15px;
+            color: #ef4444;
+            background: #fef2f2;
+            font-size: 13px;
+            border-bottom: 1px solid #fee2e2;
+        }
+
+        /* Ocultar el control original del mapa para que no se duplique */
+        .leaflet-control-container .leaflet-routing-container {
+            display: none !important;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 3px;
+        }
+        
+        /* Estilos para la leyenda */
+        .info.leyenda {
+            padding: 8px 12px;
+            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
+            line-height: 18px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            margin-right: 20px;
+        }
+
+        .info.leyenda img {
+            max-width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            object-fit: contain;
+        }
+
+        /* NUEVO: Estilo para centrar el control del clima flotante */
+        .leaflet-control-container .leaflet-bottom.leaflet-left {
+            /* Permite centrar los elementos de bottom-left si hay más espacio */
+            left: 50%;
+            transform: translateX(-50%);
+            /* Asegurarse de que no colisione con el Sidebar en pantallas grandes */
+            @media (min-width: 768px) {
+                left: calc(50% + 160px); /* 50% + mitad del sidebar (320px) */
+                transform: translateX(calc(-50% - 160px));
+            }
+        }
+    </style>
+</head>
+<!-- El cuerpo ahora es un contenedor flex vertical (flex-col) -->
+<body class="flex flex-col h-screen w-screen bg-gray-100">
+
+    <!-- 1. SECCIÓN DE INTRODUCCIÓN Y TEXTO (Inicio) -->
+    <!-- Se añade la clase 'group' para usar 'group-hover' en el contenido colapsable -->
+    <div id="intro-section" class="group shrink-0 bg-white border-b border-gray-200 p-4 shadow-lg transition-all duration-300 ease-in-out">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <!-- Icono del Título (CORREGIDO) -->
+                <img src="https://lh6.googleusercontent.com/proxy/blaJA29HfLbgzQ9uWCgYat5RBdP0QAcRQxOu6K8NjnHFsUhEwDBSfWrfMsCbb-4GpBhNySfnutl5498uRLyAcuo6VZVJaRS5omar-ymQ7zYxF-sReZh4ogUoEgZkW3OTrHWnBbAPeoMJd5egxns3bS5wbNcZU6XSTOA63nT30644UieVn54Jcy7LQ_XnxSRi4oJ85d6kxK4kCUVhABxv63PJJN8" alt="Logo de Ruta" class="h-10 w-10 text-blue-600"/>
+                
+                <!-- Contenedor del Título y Descripción Corta Visible -->
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-slate-800">Mapa de Ruta Origen Destino</h1>
+                    <p class="text-sm text-slate-500 mt-1">
+                        Mapa interactivo de Red. <span class="group-hover:hidden text-blue-500 font-medium">(Pasa el cursor por aquí para ver instrucciones)</span>
+                    </p>
+                </div>
+            </div>
+            <button onclick="window.location.reload()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition" title="Reiniciar">
+                <i class="fa-solid fa-rotate-right text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Contenido Colapsable (Instrucciones) -->
+        <!-- Por defecto: max-h-0 (colapsado), overflow-hidden. En hover: max-h-screen (expandido) -->
+        <div class="max-w-7xl mx-auto pt-2 overflow-hidden max-h-0 group-hover:max-h-screen opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
+            <p class="text-sm text-slate-500 mt-1">Alumno: Isaac Ernesto Lazcano Toríz</p>
+            <p class="mt-2 font-semibold text-slate-700">Instrucciones</p>
+            <ul class="text-sm text-slate-500 list-disc ml-5 space-y-0.5">
+                <li>Reiniciar mapa: Dar clic en el símbolo de reinicio en la parte superior derecha de la página.</li>
+                <li>Añadir punto intermedio: Dar clic sobre la ruta principal y moverlo a donde se desea.</li>
+                <li>Borrar punto intermedio: Dar clic en la X del punto intermedio en cuestión en el apartado Orden de paradas.</li>
+                <li>Instrucciones de ruta Alterna: Dar clic en la ruta alterna (Al hacer esto, se convertirá en la ruta principal).</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- 2. CONTENEDOR PRINCIPAL: Sidebar + Mapa (Ocupa el resto de la altura disponible) -->
+    <div class="flex flex-col md:flex-row flex-1 overflow-hidden"> 
+        
+        <!-- Barra Lateral (Sidebar) -->
+        <div id="sidebar" class="w-full md:w-[320px] h-1/3 md:h-full bg-white shadow-2xl z-20 flex flex-col border-r border-gray-200 relative shrink-0">
+            
+            <!-- Header Simple para la Barra Lateral -->
+            <div class="p-3 bg-slate-50 text-slate-600 font-semibold border-b border-gray-200 shrink-0">
+                <i class="fa-solid fa-route mr-2 text-blue-500"></i> Orden de paradas
+            </div>
+
+            <!-- Contenedor Principal del Sidebar (flex-1 y scrollable internamente) -->
+            <div id="sidebar-content" class="flex-1 flex flex-col overflow-hidden relative">
+                <!-- Loading State Placeholder -->
+                <div id="loading-msg" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-0 text-slate-400">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-3 text-blue-500"></i>
+                    <p class="text-sm font-medium">Cargando mapa y ruta...</p>
+                </div>
+                <!-- Aquí se inyecta el control de ruteo -->
+            </div>
+            
+            <!-- REMOVIDO: El panel de clima se ha movido al mapa como un control flotante -->
+        </div>
+
+        <!-- Mapa -->
+        <div id="map" class="flex-1 h-2/3 md:h-full z-10 bg-slate-200"></div>
+        
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <script>
+        // Configuración Inicial
+        const startCoords = [19.257334, -98.858317];
+        const endCoords = [19.330730, -99.184045];
+        const centerCoords = [19.324591, -98.998489];
+        // Mostrar clima actual consultado desde OpenWeather, es posible que tengan que generar su propia API KEY
+        const OPENWEATHER_API_KEY = 'f4c0274073c9b2bab5f04a2fd5429e07';
+
+
+        // 1. Inicializar Mapa
+        const map = L.map('map', {
+            zoomControl: false 
+        }).setView(centerCoords, 11);
+
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        // 2. Capa Base (ArcGIS World Topo Map)
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+	        attribution: '&copy; <a href="http://osm.org/copyright">ESRI</a> contributors'
+        }).addTo(map);
+
+        // --- CÓDIGO Ícono Personalizado (Marcadores del Mapa) ---
+        
+        // Ícono para el punto de inicio (Bandera Verde)
+        const iconInicio = L.icon({
+            iconUrl: 'https://www.jpmusical.com/cdn/shop/products/Dunlop_TortexStardard-Pick_88MM-Green_Front_800x.png?v=1650986349',
+            iconSize: [50, 50],
+            iconAnchor: [25, 50],
+            popupAnchor: [0, -45]
+        });
+
+        // Ícono para el punto de destino (Bandera Roja)
+        const iconDestino = L.icon({
+            iconUrl: 'https://images.gamebanana.com/img/ico/sprays/thepod.png',
+            iconSize: [50, 50],
+            iconAnchor: [25, 50],
+            popupAnchor: [0, -45]
+        });
+
+        // Ícono para paradas intermedias/waypoints (Mantiene el ícono anterior)
+        const iconParada = L.icon({
+            iconUrl: 'https://www.jpmusical.com/cdn/shop/products/Dunlop_TortexStardard-Pick_50MM-Red_Front.png?v=1650927484',
+            iconSize: [50, 50],
+            iconAnchor: [25, 50],
+            popupAnchor: [0, -45]
+        });
+        // ------------------------------------------
+
+        // 3. Configuración del Control de Ruteo
+        const control = L.Routing.control({
+            waypoints: [
+                L.Routing.waypoint(L.latLng(startCoords), 'Punto de Origen'),
+                L.Routing.waypoint(L.latLng(endCoords), 'Punto de Destino')
+            ],
+            routeWhileDragging: true,
+            geocoder: L.Control.Geocoder.nominatim(),
+            language: 'es',
+            showAlternatives: true,
+            fitSelectedRoutes: true,
+            containerClassName: 'custom-routing-container',
+            lineOptions: {
+                // RUTA PRINCIPAL: Verde Esmeralda
+                styles: [{color: '#10B981', opacity: 0.8, weight: 6}], 
+                extendToWaypoints: true,
+                missingRouteTolerance: 10
+            },
+            altLineOptions: {
+                // RUTA ALTERNA: Rojo con 50% de opacidad
+                styles: [{color: '#ef4444', opacity: 0.5, weight: 4}]
+            },
+            createMarker: function(i, wp, nWps) {
+                let icon;
+                if (i === 0) {
+                    icon = iconInicio; // Primer punto es el inicio
+                } else if (i === nWps - 1) {
+                    icon = iconDestino; // Último punto es el destino
+                } else {
+                    icon = iconParada; // Puntos intermedios
+                }
+                
+                return L.marker(wp.latLng, {
+                    draggable: true,
+                    icon: icon
+                });
+            }
+        }).addTo(map);
+
+        // 4. Integración Robusta con la UI y Lógica de Clima
+        
+        /**
+         * Obtiene el clima (descripción, temperatura y probabilidad de lluvia)
+         * para la ubicación dada.
+         * @param {object} param0 - Latitud y longitud.
+         * @returns {Promise<{description: string, temp: string, pop: string}>} - Información del clima.
+         */
+        async function obtenerClima({ lat, lng }) {
+            const defaultResult = { description: "Clima no disponible", temp: "N/A", pop: "0" };
+
+            // Implementación de backoff exponencial para reintentos
+            for (let i = 0; i < 3; i++) {
+                try {
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&units=metric&lang=es&appid=${OPENWEATHER_API_KEY}`);
+                    
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(`OpenWeather API error: ${errorData.message}`);
+                    }
+                    
+                    const data = await res.json();
+
+                    if (!data.list || data.list.length === 0) {
+                        return defaultResult;
+                    }
+                    
+                    const nextForecast = data.list[0];
+
+                    const description = nextForecast.weather[0].description;
+                    const temp = nextForecast.main.temp.toFixed(1); 
+                    const pop = (nextForecast.pop * 100).toFixed(0); 
+                    
+                    return { description, temp, pop };
+
+                } catch (error) {
+                    console.error(`Error al obtener clima (intento ${i + 1}):`, error.message);
+                    if (i < 2) {
+                        const delay = Math.pow(2, i) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        return defaultResult;
+                    }
+                }
+            }
+            return defaultResult; 
+        }
+
+        // --- MODIFICADO: Control de Leaflet para el Clima Flotante (Ahora por Hover) ---
+        L.Control.WeatherDisplay = L.Control.extend({
+            onAdd: function(map) {
+                // Contenedor principal del control
+                this._div = L.DomUtil.create('div', 'leaflet-control-weather-display');
+                L.DomEvent.disableClickPropagation(this._div);
+                
+                // Estructura HTML estática para el panel (usa group/clima para el hover)
+                // El contenido se expande usando group-hover/clima:max-h-[300px]
+                this._div.innerHTML = `
+                    <div id="weather-panel" class="group/clima bg-white rounded-lg shadow-xl mb-4 max-w-xs mx-auto border border-slate-100 min-w-[220px] transition-shadow duration-300 hover:shadow-2xl">
+                        <!-- Encabezado (Siempre visible) -->
+                        <div id="weather-header" class="p-4 py-3 text-xs text-slate-500 font-bold flex items-center justify-between transition-colors cursor-pointer">
+                            <span class="flex items-center gap-1 shrink-0">
+                                <i class="fa-solid fa-cloud-sun-rain text-blue-500"></i> PRONÓSTICO CLIMÁTICO (Próx. 3h)
+                            </span>
+                            <!-- Icono de indicación de estado (gira al hacer hover) -->
+                            <i id="collapse-icon" class="fa-solid fa-chevron-up text-sm text-slate-400 group-hover/clima:rotate-180 transition-transform duration-500"></i>
+                        </div>
+                        
+                        <!-- Cuerpo de Contenido Colapsable (Oculto por defecto, visible en hover) -->
+                        <!-- max-h-0 para colapsado, max-h-[300px] para expandido -->
+                        <div id="weather-wrapper" class="max-h-0 group-hover/clima:max-h-[300px] overflow-hidden transition-all duration-500 ease-in-out">
+                            <!-- Contenedor interior para el contenido dinámico -->
+                            <div id="weather-content" class="p-4 pt-0 text-sm text-slate-400 border-t border-slate-100 group-hover/clima:border-t-slate-200 transition-colors rounded-b-lg">
+                                Esperando ruta...
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                return this._div;
+            },
+            // Método para actualizar el contenido del cuerpo colapsable
+            updateContent: function(html) {
+                const bodyContent = this._div.querySelector('#weather-content');
+                bodyContent.innerHTML = html;
+                
+                // Aseguramos que el borde superior cambie de color al cargarse contenido.
+                bodyContent.classList.remove('border-t-slate-100');
+                bodyContent.classList.add('border-t-slate-200');
+            }
+        });
+
+        // Función de fábrica
+        L.control.weatherDisplay = function(opts) {
+            return new L.Control.WeatherDisplay(opts);
+        }
+
+        // Inicializar el control del clima en el mapa (bottomleft para centrarlo con CSS)
+        const weatherControl = L.control.weatherDisplay({ position: 'bottomleft' }).addTo(map);
+
+
+        // Manejo de Errores
+        control.on('routingerror', function(e) {
+            console.error("Routing Error:", e);
+            const loading = document.getElementById('loading-msg');
+            if(loading) {
+                loading.style.display = 'flex'; 
+                loading.innerHTML = `<div class="text-red-500 p-4 text-center"><i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i><p>Error al calcular la ruta.</p><p class="text-xs text-gray-400 mt-2">${e.error?.message || 'Verifica tu conexión'}</p></div>`;
+            }
+            
+            // 1. Actualización del control flotante del clima con error
+            weatherControl.updateContent(`
+                <p class="text-red-500 font-medium">No se pudo obtener el pronóstico del clima debido al error de ruta.</p>
+            `);
+        });
+
+        // Manejo al encontrar rutas (aquí se llama a la función del clima)
+        control.on('routesfound', async function(e) {
+            const loading = document.getElementById('loading-msg');
+            if(loading) loading.style.display = 'none';
+
+            // 1. Mostrar estado de carga del clima en el control flotante
+            weatherControl.updateContent(`
+                <p class="flex justify-between items-center">
+                    <span class="font-bold text-slate-800">Inicio:</span> 
+                    <span><i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Cargando...</span>
+                </p>
+                <p class="flex justify-between items-center mt-2">
+                    <span class="font-bold text-slate-800">Destino:</span> 
+                    <span><i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Cargando...</span>
+                </p>
+            `);
+            
+            // 2. Obtener coordenadas y consultar el clima de forma asíncrona
+            const route = e.routes[0];
+            const startWp = route.waypoints[0].latLng;
+            const endWp = route.waypoints[route.waypoints.length - 1].latLng;
+            
+            const [startWeatherResult, endWeatherResult] = await Promise.all([
+                obtenerClima(startWp),
+                obtenerClima(endWp)
+            ]);
+
+            // 3. Actualizar el panel con los resultados
+            weatherControl.updateContent(`
+                <!-- Clima de Inicio -->
+                <div class="mb-1 text-slate-700 font-medium">
+                    <p class="flex justify-between font-bold text-slate-800">
+                        <span>Inicio:</span>
+                        <span>${startWeatherResult.description}, ${startWeatherResult.temp}°C</span>
+                    </p>
+                    <p class="flex justify-between text-xs text-slate-500 mt-0.5">
+                        <span class="font-normal">Prob. Lluvia:</span> 
+                        <span class="font-medium">${startWeatherResult.pop}%</span>
+                    </p>
+                </div>
+                
+                <!-- Clima de Destino -->
+                <div class="text-slate-700 font-medium">
+                    <p class="flex justify-between font-bold text-slate-800 mt-2">
+                        <span>Destino:</span>
+                        <span>${endWeatherResult.description}, ${endWeatherResult.temp}°C</span>
+                    </p>
+                    <p class="flex justify-between text-xs text-slate-500 mt-0.5">
+                        <span class="font-normal">Prob. Lluvia:</span> 
+                        <span class="font-medium">${endWeatherResult.pop}%</span>
+                    </p>
+                </div>
+            `);
+        });
+
+        // 5. MOVIMIENTO SEGURO DEL CONTENEDOR
+        const routingContainer = control.getContainer();
+        const sidebarContent = document.getElementById('sidebar-content');
+
+        if (routingContainer && sidebarContent) {
+            sidebarContent.appendChild(routingContainer);
+            routingContainer.style.display = 'flex';
+        }
+
+        // Añadir escala (incluyendo unidades imperiales y aumentando el ancho para más divisiones)
+        L.control.scale({ 
+            imperial: true, 
+            position: 'bottomright',
+            maxWidth: 200 
+        }).addTo(map);
+
+        // --- CÓDIGO Leyenda con íconos personalizados (Actualizado) ---
+        // Obtener la URL de los íconos definidos para usarlos en la leyenda
+        const iconInicioUrl = iconInicio.options.iconUrl; 
+        const iconDestinoUrl = iconDestino.options.iconUrl; 
+        const iconParadaUrl = iconParada.options.iconUrl; 
+
+        // Formar la leyenda con íconos personalizados (origen, destino, paradas)
+        const leyenda = L.control({ position: 'bottomright' });
+        leyenda.onAdd = () => {
+            const div = L.DomUtil.create('div', 'info leyenda');
+            div.innerHTML = `
+                <strong class="text-slate-800">Simbología</strong><br>
+                
+                <!-- ENTRADAS DE RUTA -->
+                <div class="flex items-center gap-2 mb-1">
+                    <!-- Color de la ruta principal: #10B981 -->
+                    <div style="background-color: #10B981; height: 3px; width: 16px;"></div>
+                    <span class="text-sm text-slate-600">Ruta Principal</span>
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                    <!-- Color de la ruta alterna: #ef4444 -->
+                    <div style="background-color: #ef4444; height: 3px; width: 16px; opacity: 0.7;"></div>
+                    <span class="text-sm text-slate-600">Ruta Alterna</span>
+                </div>
+                <!-- FIN ENTRADAS DE RUTA -->
+
+                <div class="flex items-center gap-2 mb-1">
+                    <img src="${iconDestinoUrl}" width="16" class="h-4 w-4 object-contain"> 
+                    <span class="text-sm text-slate-600">Plumilla del Destino</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <img src="${iconParadaUrl}" width="16" class="h-4 w-4 object-contain"> 
+                    <span class="text-sm text-slate-600">Punto Intermedio</span>
+                </div>
+                <div class="flex items-center gap-2 mb-1">
+                    <img src="${iconInicioUrl}" width="16" class="h-4 w-4 object-contain"> 
+                    <span class="text-sm text-slate-600">Punto de Inicio</span>
+                </div>
+            <!--<small class="block mt-2 text-xs text-slate-400">
+                    Haz clic y arrastra el ícono para moverlo.
+                    <p>Haz clic dentro de la ruta para crear punto intermedio.<p>
+                </small> -->
+            `;
+            return div;
+        };
+        leyenda.addTo(map);
+        // --------------------------------------------------------
+
+    </script>
+</body>
+</html>
