@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entrega Final GAT 2026-1</title>
+    <style>
+        /* * Estilos principales 
+         * Se han movido todos los estilos a la sección <head> para mejor organización 
+         */
+        body {
+            /* Fondo ligero para contrastar con el contenedor principal */
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f3f4f6; 
+        }
+        
+        /* * Contenedor principal (main-container) 
+         * Esto implementa el concepto de 'max-width' para centrar la página 
+         * y le da el look de tarjeta con esquinas redondeadas al contenido completo.
+         */
+        .main-container {
+            max-width: 90%; /* Limita el ancho en monitores grandes */
+            width: 95%; /* Asegura que sea responsivo en móviles */
+            margin: 40px auto; /* Centra el contenedor horizontalmente y añade margen superior/inferior */
+            padding: 20px;
+            background-color: white; /* Fondo para el contenido */
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+
+        /* Estilos para el encabezado principal (el banner rojo) */
+        .header-banner {
+            background-color: #E95A44;
+            width: 100%;
+            margin: 0 0 20px 0;
+            text-align: center;
+            border-radius: 1rem;
+            padding: 1px 0;
+            color: white;
+        }
+        
+        .header-banner h1 {
+            line-height: 1.2;
+            padding: 1px 0;
+        }
+
+        /* * LOGO/IMAGEN 
+         */
+        .info-box img {
+            width: 75px;
+            height: 75px;
+            /* Estilo para que la imagen se mantenga a la derecha */
+            margin-left: auto;
+            display: block; 
+        }
+        
+        /* Estilos de la barra de navegación (topnav) */
+        .topnav {
+            overflow-x: auto; /* Permite desplazamiento en dispositivos muy pequeños */
+            white-space: nowrap; /* Evita que los enlaces se rompan en varias líneas */
+            background-color: #333;
+            border-radius: 0.5rem; 
+            margin-bottom: 20px;
+        }
+
+        .topnav a {
+            display: inline-block; /* Usa inline-block en lugar de float para manejo de overflow */
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 15px; /* Tamaño un poco más pequeño para caber más */
+            cursor: pointer; /* Indica que es interactivo */
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #E95A44;
+            color: white;
+        }
+        
+        /* * Estilos para la información del curso/alumno (info-box) 
+         * Uso de Flexbox para alinear el texto (izquierda) y la imagen (derecha)
+         */
+        .info-box {
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            /* Configuración de Flexbox para la alineación horizontal */
+            display: flex;
+            justify-content: space-between; /* Espacio entre el texto y la imagen */
+            align-items: center; /* Centra verticalmente ambos elementos */
+        }
+        
+        .info-text p {
+            margin: 5px 0; /* Ajuste de margen para el texto */
+        }
+
+        /* Estilos para ocultar/mostrar las secciones de contenido */
+        .content-section {
+            display: none;
+            padding: 20px 0;
+            margin-top: 10px;
+            /* Eliminé el borde para que el contenido fluya mejor en la tarjeta principal */
+        }
+
+        .content-section.active {
+            display: block;
+        }
+        
+        .content-section ol {
+            padding-left: 20px; /* Ajusta la indentación para listas ordenadas */
+        }
+
+        /* --- ESTILOS PARA IFRAME RESPONSIVO --- */
+        /* Contenedor que define la relación de aspecto (16:9 en este caso) */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 9 / 16 * 100% = 56.25% (Relación de aspecto 16:9) */
+            height: 0;
+            overflow: hidden;
+            margin-top: 10px;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Estilos del iframe hijo (se posiciona absolutamente dentro del contenedor) */
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; /* Corregido: Ahora ocupa el 100% del contenedor */
+            height: 100%; /* Corregido: Ahora ocupa el 100% del contenedor */
+            border: 0; /* Quitamos el borde por defecto del iframe */
+        }
+        /* ------------------------------------------- */
+    </style>
+</head>
+<body>
+
+<!-- Main container for max-width, centering, and card effect -->
+<div class="main-container">
+
+    <!-- Header Banner -->
+    <div class="header-banner">
+        <h1>
+            <p style="font-size:90%; margin: 5px 0;">Entrega Final:</p> 
+            <p style="font-size:120%; margin: 5px 0;">Geomática Aplicada al Transporte</p>
+        </h1>
+    </div>
+    
+    <!-- Course Info and Logo (side-by-side using Flexbox) -->
+    <div class="info-box">
+        <!-- Contenedor para el texto del curso/alumno -->
+        <div class="info-text">
+            <b>
+                <p>Semestre: 2026-1</p>
+                <p>Alumno: Isaac Ernesto Lazcano Toríz</p>
+                <p>Profesor: Ing. Luis Arturo Cabrera López</p>
+            </b>
+        </div>
+
+        <!-- Imagen del Escudo (ahora a la derecha del texto) -->
+        <img src="http://isaactoriz.github.io/EntregaFinal_GAT/escudo_fi_color.png" alt="Escudo de la Facultad de Ingeniería de la UNAM">
+    </div>
+
+    <!-- Navigation Bar (Ahora con los temas principales como pestañas) -->
+    <div class="topnav">
+        <a class="nav-link active" onclick="handleNavigation('home')" id="link-home">Inicio</a>
+        <a class="nav-link" onclick="handleNavigation('infraestructura')" id="link-infraestructura">Infraestructura</a>
+        <a class="nav-link" onclick="handleNavigation('estadistica')" id="link-estadistica">Estadística</a>
+        <a class="nav-link" onclick="handleNavigation('rugosidad')" id="link-rugosidad">Rugosidad</a>
+        <a class="nav-link" onclick="handleNavigation('carretera_od')" id="link-carretera_od">Carretera O-D</a>
+        <a class="nav-link" onclick="handleNavigation('ruta_optima')" id="link-ruta_optima">Ruta Óptima</a>
+    </div>
+    
+    <!-- ************************************ -->
+    <!-- Áreas de Contenido (Secciones dinámicas) -->
+    <!-- ************************************ -->
+
+    <!-- 1. Sección de Inicio (Por defecto activa) -->
+    <div id="home-content" class="content-section active">
+        <p>Ésta es una página donde se encontrarán todos los entregables que se realizaron dentro del curso, incluyendo mapas estáticos y dinámicos, documentos pdf, archivos excel, etc.</p>
+        <p>El contenido estará dividido en los siguientes temas:</p>
+        <ul>
+            <li>Infraestructura Carretera y Desarrollo Económico <b>(Infraestructura)</b></li>
+            <ol>
+                <li>Documento en conjunto</li>
+                <li>Descripción de Participación</li>
+                <li>Resultados</li>
+            </ol>
+            <p></p>
+            <li>Estadística Carretera <b>(Estadística)</b></li>
+            <ol start="4">
+                <li>Shapefile Infraestructura Carretera</li>
+                <li>Mapa Dinámico Infraestructura Carretera</li>
+            </ol>
+            <p></p>
+            <li>Capa Asignada para el Análisis de Rugosidad <b>(Rugosidad)</b></li>
+            <ol start="6">
+                <li>Documento de Exposición de Procedimiento</li>
+                <li>Mapa de Factibilidad Resultante</li>
+            </ol>
+            <p></p>
+            <li>Carretera Origen-Destino <b>(Carretera O-D)</b></li>
+            <ol start="8">
+                <li>Proyecto Automatizado para Trazo de Obra Lineal</li>
+                <li>Proceso, Datos e Insumos por Herramienta</li>
+                <li>Proceso Evaluación Multicriterio</li>
+                <li>Mapa Resultado de Carretera Origen-Destino</li>
+            </ol>
+            <p></p>
+            <li>Ruta Óptima Origen-Destino <b>(Ruta Óptima)</b></li>
+            <ol start="12">
+                <li>Mapa dinámico de Ruta Óptima</li>
+            </ol>
+        </ul>
+	<p>Carpeta de <a href="https://github.com/isaactoriz/EntregaFinal_GAT.git">GitHub</a> con la mayoría de archivos de referencia.</p>
+	<p>Los archivos que no aparecen en esta carpeta se encuentran en otras carpetas de GitHub o en la web, sin embargo, no afecta el funcionamiento de la página.</p>
+    </div>
+    
+    <!-- 2. Sección: Infraestructura Carretera y Desarrollo Económico -->
+    <div id="infraestructura-content" class="content-section">
+        <h2>Infraestructura Carretera y Desarrollo Económico</h2>
+        <style>
+            .button {
+            background-color: #16A5BB;
+            border: none;
+            color: white;
+            padding: 20px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 1rem;
+            }
+        </style>
+        <ol>
+            <li><b>Documento en conjunto</b></li>
+                <p><a href="http://isaactoriz.github.io/EntregaFinal_GAT/DocConjunto_FuentesInfo.pdf" class="button">Descarga de Fuentes Consultadas</a></p>
+            <li><b>Descripción de Participación</b></li>
+                <p>Se buscó el Producto Interno Bruto (PIB) por Entidad Federativa directamente en la página del Instituto Nacional de Estadística y Geografía (<a href="https://www.inegi.org.mx/app/tabulados/default.aspx?pr=19&vr=1&in=1&tp=20&wr=1&cno=1&idrt=3260&opc=p">INEGI</a>) junto con el Indicador Trimestral de la Actividad Económica Estatal (<a href="https://www.inegi.org.mx/app/saladeprensa/noticia/10040">ITAEE</a>) hasta el 1er Trimestre de 2025, siendo este el más actual.</p>
+                <p>De estas páginas obtuvimos el valor del PIB por estado del año 2018 en millones de pesos y el porcentaje de variación del 1er Trimestre de 2025 con respecto al de 2018, por lo que se multiplicó el valor del PIB por la variación del 1er Trimestre de 2025 para obtener el valor en millones de pesos de este trimestre.</p>
+            <li><b>Resultados</b></li>
+                <p>Archivos descargables:</p>
+                <a href="https://isaactoriz.github.io/EntregaFinal_GAT/PIB_por_Entidad_Federativa_1T_2025.png" class="button">Mapa en formato PNG</a>
+                <a href="https://isaactoriz.github.io/EntregaFinal_GAT/PIBxEnt_1T2025.xlsx" class="button">Excel de Mapa</a>
+                <p>Tablas descargables:</p>
+                <a href="http://isaactoriz.github.io/EntregaFinal_GAT/Tabla_DensidCarret_Est.pdf" class="button">Densidad Carretera por Estado</a>
+                <a href="http://isaactoriz.github.io/EntregaFinal_GAT/Tabla_DensidCarret_Mun.pdf" class="button">Densidad Carretera por Municipio</a>
+                <a href="http://isaactoriz.github.io/EntregaFinal_GAT/MissionImpossibleClassifiedWallpaper.png" class="button">Base de datos ULTRA SECRETA de la FMI (Fuerza de Misión Imposible)</a> 
+                </p>
+                <p><img src="https://isaactoriz.github.io/EntregaFinal_GAT/PIB_por_Entidad_Federativa_1T_2025.png" alt="PIB por Entidad Federativa" width=100%></p>
+        </ol>
+    </div>
+
+    <!-- 3. Sección: Estadística Carretera -->
+    <div id="estadistica-content" class="content-section">
+        <h2>Estadística Carretera</h2>
+        <ol start="4">
+            <li><b>Shapefile Infraestructura Carretera</b></li>
+            <p>
+            <a href="https://isaactoriz.github.io/EntregaFinal_GAT/PIB_Ent.gpkg" class="button">Geopackage de mapa</a>
+            <a href="https://isaactoriz.github.io/EntregaFinal_GAT/PIB_Ent_Shapefile.zip" class="button">Shapefile de mapa</a>
+            </p>
+            <li><b>Mapa Dinámico Infraestructura Carretera</b></li>
+                <!-- Contenedor responsivo para el iframe -->
+                <div class="iframe-container">
+                    <iframe src="https://isaactoriz.github.io/EntregaFinal_GAT/MapaInteractivo_PIBEntFed.html"  title="PIB por Entidad Federativa 1er Trimestre 2025"></iframe>
+                </div>
+        </ol>
+    </div>
+    
+    <!-- 4. Sección: Capa Asignada para el Análisis de Rugosidad -->
+    <div id="rugosidad-content" class="content-section">
+        <h2>Capa Asignada para el Análisis de Rugosidad</h2>
+        <p>En este caso, se realizó la capa de Población considerando la Cantidad de Habitantes del estado de Colima.</p>
+        <ol start="6">
+            <li><b>Documento de Exposición de Procedimiento</b></li>
+                <p>Primero se hizo el intento de obtener una capa que diera prioridad a las localidades de mayor población, sin embargo, solo se logró hacer una que dijera qué tan lejos se está de una locación.</p>
+                <p><a href="https://isaactoriz.github.io/EntregaFinal_GAT/LocalidadesXHabitantes.pdf" class="button">Diapositiva procedimiento (Capas mal logradas)</a></p>
+                <p>Al final, después de un análisis con ayuda del profesor, se logró crear interpolaciones con respecto al número de habitantes de cada localidad, dándonos como resultado las capas esperadas.</p>
+                <p>Esta capa se logró utilizando las capas "localidad250_a" (área de asentamientos grandes) y "localidad250_p" (puntos de asentamientos rurales) del estado de Colima.</p>
+                <p>Se usaron las herramientas IDW (Distancia Inversa Ponderada) para la capa "localidad250_p" e Interpolación Kernel con Barreras para "localidad250_a" para finalizar con una Suma Ponderada de estos dos ráster.</p>
+            <li><b>Mapa de Factibilidad Resultante</b></li>
+                <p><a href="https://isaactoriz.github.io/EntregaFinal_GAT/PoblacionXHabitantes.tif" class="button">Capa Ráster en formato .tif</a>
+                <a href="https://isaactoriz.github.io/EntregaFinal_GAT/Fact_XPobl.png" class="button">Mapa en formato .png</a></p>
+                <p><img src="https://isaactoriz.github.io/EntregaFinal_GAT/Fact_XPobl.png" alt="Factibilidad por Cantidad de Población" width=100%></p>
+        </ol>
+    </div>
+
+    <!-- 5. Sección: Carretera Origen-Destino -->
+    <div id="carretera_od-content" class="content-section">
+        <h2>Carretera Origen-Destino</h2>
+        <ol start="8">
+            <li><b>Proyecto Automatizado para Trazo de Obra Lineal</b></li>
+                <p>Paquete de Proyecto ArcGIS de Diseño de Infraestructura Lineal (ppkx).</p>
+                <p><a href="https://drive.google.com/file/d/1Fgf3ouHx_FBBUGsB2TTvjBSL5xJhKz25/view" class="button">Archivo .ppkx del proyecto (Posible solicitud de ingreso al Archivo de Google Drive)</a></p>
+                <p>Modelo para Automatizar Diseño de Infraestructura Lineal (Se necesita el paquete de proyecto .ppkx).</p>
+                <p><a href="https://isaactoriz.github.io/EntregaFinal_GAT/OrigenDestino.atbx" class="button">Archivo .atbx del modelo</a></p>
+            <li><b>Proceso, Datos y Resultados por Herramienta</b></li>
+                <p>Todos los procesos se realizaron con herramientas del software ArcGIS en este orden:</p>
+                <p><img src="https://isaactoriz.github.io/EntregaFinal_GAT/Modelo_OrigDest.png" alt="Modelo Origen-Destino" width=50%></p>
+                <p><ol>
+                    <li>Suma Ponderada (Evaluación Multicriterio)</li>
+                        <p>Se deben importar todas las capas ráster necesarias para el análisis de rugosidad (7 capas) y darles diferentes pesos dependiendo cuál se concidere de mayor importancia.</p>
+                    <li>Acumulación de Distancia</li>
+                        <p>Requiere de 2 capas, Orígenes de ráster o entidad de entrada (punto Origen) y el Ráster de costes de entrada (Suma ponderada), para dar como resultado 2 ráster, el Ráster de acumulación de distancia de salida y el Ráster de dirección hacia atrás de salida.</p>
+                    <li>Ruta Óptima como línea</li>
+                        <p>Requiere de 3 capas, Destinos de ráster o entidad de entrada (punto Destino), Ráster de acumulación de distancia de entrada y el Ráster de dirección de flujo o dirección hacia atrás de entrada, para dar 1 Ráster de salida de Ruta óptima de salida como línea.</p>
+                </ol></p>
+            <li><b>Proceso Evaluación Multicriterio</b></li>
+                <p>Para realizar la evaluación multicriterio fue necesario dividir las 7 capas (más 2 capas de otros estados) entre todos los compañeros del grupo, por lo que cada quién realizó su parte por separado y después los compartimos para realizar este ejercicio.</p>
+                <p>La manera en como lo dividimos fue la siguiente:</p>
+                <ul>
+                    <li>Jorge: Red hidrográfica.</li>
+                    <li>Natalia: Usos de suelo y vegetación.</li>
+                    <li>Sebastian: Áreas Naturales Protegidas.</li>
+                    <li>Isaac: Población.</li>
+                    <li>Oscar: Cuerpos de agua.</li>
+                    <li>Omar: Línea de transmisión eléctrica.</li>
+                    <li>Diana: Vías Férreas.</li>
+                    <li>Karla: Susceptibilidad a movimiento de masas (Capa de otro estado)</li>
+                    <li>Tapia: Susceptibilidad a subsidencia. (Capa de otro estado)</li>
+                </ul>
+                <p>Si se desea realizar cambios para encontrar una ruta diferente, se pueden cambiar los pesos de las capas, por ejemplo, si se quiere evitar a toda costa un río o un lago, las capa de Red Hidrográfica y Cuerpos de agua deben tener conciderablemente un peso mayor que las otras.</p>
+                <p></p>
+            <li><b>Mapa Resultado de Carretera Origen-Destino</b></li>
+                <p><a href="https://isaactoriz.github.io/EntregaFinal_GAT/FactCarrXSupFricc.png" class="button">Mapa en formato .png</a></p>
+                <p><img src="https://isaactoriz.github.io/EntregaFinal_GAT/FactCarrXSupFricc.png" alt="Modelo Origen-Destino" width=100%></p>
+        </ol>
+    </div>
+
+    <!-- 6. Sección: Ruta Óptima Origen-Destino -->
+    <div id="ruta_optima-content" class="content-section">
+        <h2>Ruta Óptima Origen-Destino</h2>
+        <ol start="12">
+            <li><b>Mapa dinámico de Ruta Óptima</b></li>
+                <p>En caso de que no cargue bien la página, reiniciar el mapa con el botón de reinicio ubicado en la parte superior derecha del mapa.</p>
+                <div class="iframe-container">
+                    <iframe src="https://isaactoriz.github.io/EntregaFinal_GAT/PaginaRutaOrigenDestino_IsaacToriz.html"  title="Mapa Dinámico de Ruta Óptima"></iframe>
+                </div>
+        </ol>
+    </div>
+  
+</div> <!-- End main-container -->
+
+<script>
+    /**
+     * Función que gestiona la navegación entre secciones (simulación de una SPA).
+     * Muestra la sección de contenido solicitada y actualiza el botón activo en la barra de navegación.
+     * @param {string} sectionId - El ID de la sección de contenido a mostrar (e.g., 'home', 'infraestructura').
+     */
+    function handleNavigation(sectionId) {
+        // 1. Ocultar todas las secciones de contenido
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // 2. Mostrar la sección solicitada
+        const targetSection = document.getElementById(sectionId + '-content');
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+
+        // 3. Actualizar el estado 'active' en la barra de navegación
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        const activeLink = document.getElementById('link-' + sectionId);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        // Si quisieras ejecutar código específico al cambiar de sección, sería aquí.
+        // Por ejemplo, para cargar un mapa dinámico solo cuando se pulsa su pestaña.
+        if (sectionId === 'ruta_optima') {
+             console.log('Cargando mapa dinámico de Ruta Óptima...');
+             // Aquí iría el código para inicializar un mapa de Leaflet o Three.js
+        }
+    }
+
+    // Inicializa la navegación al cargar la página para asegurar que 'Inicio' esté activo
+    document.addEventListener('DOMContentLoaded', () => {
+        handleNavigation('home');
+    });
+</script>
+
+</body>
+</html>
